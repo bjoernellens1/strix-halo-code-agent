@@ -1,7 +1,7 @@
 services:
   archon:
     image: ghcr.io/coleam00/archon:latest
-    ports:
-      - "8181:8181"
+    # Use host network to access local llama-server on 127.0.0.1
+    network_mode: "host"
     env_file:
       - ./archon.env
