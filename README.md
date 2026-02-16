@@ -18,8 +18,18 @@ toolbox enter llama-rocm-7.2
 
 ## 2) Start model servers (inside toolbox)
 
-Set paths to GGUF files (or mount them into /models), then:
+By default, scripts will **automatically download** optimized GGUF models from HuggingFace (specifically `bartowski`'s `Q4_K_M` quantizations):
+- **Utility**: `bartowski/Qwen2.5-7B-Instruct-GGUF`
+- **Coder**: `bartowski/Qwen2.5-Coder-32B-Instruct-GGUF`
+- **Thinker**: `bartowski/Meta-Llama-3.1-70B-Instruct-GGUF`
 
+Just run:
+```bash
+./scripts/start-all.sh
+```
+
+### Optional: Use local models
+If you already have models, set the environment variables to point to them:
 ```bash
 export MODEL_UTIL=/models/qwen2.5-7b-instruct-q4_k_m.gguf
 export MODEL_CODER=/models/qwen3-coder-30b-q4_k_m.gguf
