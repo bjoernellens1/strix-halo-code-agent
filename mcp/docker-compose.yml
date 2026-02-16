@@ -1,0 +1,7 @@
+services:
+  archon:
+    image: ghcr.io/coleam00/archon:latest
+    ports:
+      - "8181:8181"
+    env_file:
+      - ./archon.env
