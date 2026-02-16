@@ -16,8 +16,8 @@
           buildInputs = with pkgs; [
             nodejs_20
             nodePackages.typescript
-            nodePackages.tsx
-            nodePackages.npm
+            # nodePackages.tsx # Not in nixpkgs top-level set usually under nodePackages, let's use global or let npm install it
+            pkgs.tsx
           ];
 
           shellHook = ''

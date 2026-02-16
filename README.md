@@ -49,3 +49,24 @@ OPENCODE_CONFIG_DIR=$(pwd)/opencode opencode
 
 * Tab between agents: build / plan / ultra
 * Run commands: `/scan`, `/tests`, `/review`, `/ultra`
+
+## 5) OpenRouter Integration
+
+To use cloud models via OpenRouter:
+
+1.  Export your API key:
+    ```bash
+    export OPENROUTER_API_KEY=sk-or-v1-...
+    ```
+2.  Run `opencode` (it will use the configured OpenRouter models).
+
+### Standalone Agent
+
+A standalone agent is available in `openrouter-agent/`:
+```bash
+cd openrouter-agent
+nix develop
+npm run start:headless
+```
+
+See [docs/openrouter_tutorial.md](docs/openrouter_tutorial.md) for details.

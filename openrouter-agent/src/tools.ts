@@ -7,7 +7,7 @@ export const timeTool = tool({
     inputSchema: z.object({
         timezone: z.string().optional().describe('Timezone (e.g., "UTC", "America/New_York")'),
     }),
-    execute: async ({ timezone }) => {
+    execute: async ({ timezone }: { timezone?: string }) => {
         return {
             time: new Date().toLocaleString('en-US', { timeZone: timezone || 'UTC' }),
             timezone: timezone || 'UTC',
@@ -21,9 +21,9 @@ export const calculatorTool = tool({
     inputSchema: z.object({
         expression: z.string().describe('Math expression (e.g., "2 + 2", "sqrt(16)")'),
     }),
-    execute: async ({ expression }) => {
+    execute: async ({ expression }: { expression: string }) => {
         // Simple safe eval for basic math
-        const sanitized = expression.replace(/[^0-9+\\-*/().\\s]/g, '');
+        const sanitized = expression.replace(/[^0-9+*/().\s-]/g, '');
         const result = Function(`"use strict"; return (${sanitized})`)();
         return { expression, result };
     },
@@ -37,7 +37,7 @@ export const webSearchTool = tool({
     inputSchema: z.object({
         query: z.string().describe('The search query'),
     }),
-    execute: async ({ query }) => {
+    execute: async ({ query }: { query: string }) => {
         console.log(`[WebSearch] Mocking search for: ${query}`);
         // Return a mock response or use a free search API if available/configured.
         // For now, we simulate a finding.

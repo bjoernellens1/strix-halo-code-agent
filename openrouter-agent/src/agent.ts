@@ -31,7 +31,7 @@ export interface AgentConfig {
     apiKey: string;
     model?: string;
     instructions?: string;
-    tools?: Tool<z.ZodTypeAny, z.ZodTypeAny>[];
+    tools?: Tool[];
     maxSteps?: number;
 }
 
@@ -69,7 +69,7 @@ export class Agent extends EventEmitter<AgentEvents> {
     }
 
     // Register additional tools at runtime
-    addTool(newTool: Tool<z.ZodTypeAny, z.ZodTypeAny>): void {
+    addTool(newTool: Tool): void {
         this.config.tools.push(newTool);
     }
 
@@ -85,8 +85,8 @@ export class Agent extends EventEmitter<AgentEvents> {
         try {
             const result = await this.client.callModel({
                 model: this.config.model,
-                system: this.config.instructions,
-                messages: this.messages.map((m) => ({ role: m.role, content: m.content })),
+                instructions: this.config.instructions,
+                input: this.messages.map((m) => ({ role: m.role, content: m.content })),
                 tools: this.config.tools.length > 0 ? this.config.tools : undefined,
                 stopWhen: [stepCountIs(this.config.maxSteps)],
             });
@@ -103,9 +103,10 @@ export class Agent extends EventEmitter<AgentEvents> {
                 switch (item.type) {
                     case 'message':
                         // Message items contain progressively updated content
-                        const textContent = item.content?.find((c: { type: string }) => c.type === 'text');
-                        if (textContent && 'text' in textContent) {
-                            const newText = textContent.text;
+                        // Check for 'output_text' (standard) or 'text' (legacy/alternative)
+                        const textContent = item.content?.find((c: { type: string }) => c.type === 'output_text' || c.type === 'text');
+                        if (textContent && ('text' in textContent)) {
+                            const newText = (textContent as any).text;
                             if (newText !== fullText) {
                                 const delta = newText.slice(fullText.length);
                                 fullText = newText;
@@ -135,9 +136,14 @@ export class Agent extends EventEmitter<AgentEvents> {
 
             // Get final text if streaming didn't capture it
             if (!fullText) {
-                // Fallback or final check
-                // Note: SDK might not have a getText() on the stream result directly in all versions, 
-                // but let's assume standard behavior or that the stream loop populated it.
+                // Verified fallback: SDK usually provides a way to get the final text
+                try {
+                    if (typeof result.getText === 'function') {
+                        fullText = await result.getText();
+                    }
+                } catch (e) {
+                    // Ignore fallback error
+                }
             }
 
             this.emit('stream:end', fullText);
@@ -165,8 +171,8 @@ export class Agent extends EventEmitter<AgentEvents> {
         try {
             const result = await this.client.callModel({
                 model: this.config.model,
-                system: this.config.instructions,
-                messages: this.messages.map((m) => ({ role: m.role, content: m.content })),
+                instructions: this.config.instructions,
+                input: this.messages.map((m) => ({ role: m.role, content: m.content })),
                 tools: this.config.tools.length > 0 ? this.config.tools : undefined,
                 stopWhen: [stepCountIs(this.config.maxSteps)],
             });

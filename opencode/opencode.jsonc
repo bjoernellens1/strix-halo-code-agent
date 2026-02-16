@@ -1,9 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
   // Prefer local-only usage
-  "enabled_providers": ["local_llamacpp"],
-
+  "enabled_providers": [
+    "local_llamacpp",
+    "openrouter"
+  ],
   "provider": {
     "local_llamacpp": {
       "npm": "@ai-sdk/openai-compatible",
@@ -13,33 +14,79 @@
         "timeout": 600000
       },
       "models": {
-        "util":   { "name": "Utility (llama.cpp)", "baseURL": "http://127.0.0.1:8001/v1", "tool_call": true,
-                    "limit": { "context": 8192,  "output": 2048 } },
-        "coder":  { "name": "Coder (llama.cpp)",   "baseURL": "http://127.0.0.1:8002/v1", "tool_call": false,
-                    "limit": { "context": 32768, "output": 4096 } },
-        "thinker":{ "name": "Thinker (llama.cpp)", "baseURL": "http://127.0.0.1:8003/v1", "tool_call": false,
-                    "limit": { "context": 32768, "output": 4096 } }
+        "util": {
+          "name": "Utility (llama.cpp)",
+          "baseURL": "http://127.0.0.1:8001/v1",
+          "tool_call": true,
+          "limit": {
+            "context": 8192,
+            "output": 2048
+          }
+        },
+        "coder": {
+          "name": "Coder (llama.cpp)",
+          "baseURL": "http://127.0.0.1:8002/v1",
+          "tool_call": false,
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          }
+        },
+        "thinker": {
+          "name": "Thinker (llama.cpp)",
+          "baseURL": "http://127.0.0.1:8003/v1",
+          "tool_call": false,
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          }
+        }
+      }
+    },
+    "openrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OpenRouter",
+      "options": {
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "ENV:OPENROUTER_API_KEY",
+        "timeout": 600000
+      },
+      "models": {
+        "minimax_coder": {
+          "name": "Minimax-Coder",
+          "id": "minimax/minimax-m2.5",
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        },
+        "safeguard": {
+          "name": "Safeguard",
+          "id": "openai/gpt-oss-safeguard-20b",
+          "tool_call": false,
+          "limit": {
+            "context": 128000,
+            "output": 4096
+          }
+        }
       }
     }
   },
-
   // Default model for normal "build"
   "model": "local_llamacpp/coder",
   "small_model": "local_llamacpp/util",
-
   // Global tool safety: require approval for edits + shell
   "permission": {
     "edit": "ask",
     "bash": "ask"
   },
-
   // Keep long tasks coherent
   "compaction": {
     "auto": true,
     "prune": true,
     "reserved": 12000
   },
-
   // MCP servers
   "mcp": {
     "archon": {
@@ -53,40 +100,66 @@
       "enabled": false
     }
   },
-
   // Optional plugin memory (see README below)
-  "plugin": ["opencode-mem"],
-
+  "plugin": [
+    "opencode-mem"
+  ],
   // Agents (primary)
   "agent": {
     "build": {
       "description": "Implement changes (normal mode)",
       "mode": "primary",
-      "model": "local_llamacpp/coder",
-      "tools": { "write": true, "edit": true, "bash": true }
+      "model": "openrouter/minimax_coder",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
     },
     "plan": {
       "description": "Plan/review without changing code",
       "mode": "primary",
       "model": "local_llamacpp/thinker",
-      "tools": { "write": false, "edit": false, "bash": false }
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
     },
-
     // Ultra Work Mode
     "ultra": {
       "description": "Long-horizon, multi-pass implementation with rigorous checks",
       "mode": "primary",
-      "model": "local_llamacpp/coder",
+      "model": "openrouter/minimax_coder",
       "prompt": "@opencode/agents/ultra.md",
-      "tools": { "write": true, "edit": true, "bash": true }
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
     },
-
+    // Research Agent
+    "research": {
+      "description": "Background research and web search",
+      "mode": "primary",
+      "model": "openrouter/safeguard",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "browser": true
+      }
+    },
     // Subagents (fast helpers)
     "util": {
       "description": "Fast helper for summarization, repo scanning instructions, command drafting",
       "mode": "subagent",
       "model": "local_llamacpp/util",
-      "tools": { "write": false, "edit": false, "bash": false }
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
     }
   }
 }
