@@ -11,7 +11,8 @@ LLAMA_BIN="${LLAMA_SERVER_BIN:-llama-server}"
 
 if ! command -v "$LLAMA_BIN" &> /dev/null; then
     echo "Error: $LLAMA_BIN not found in PATH."
-    echo "Please set LLAMA_SERVER_BIN to the absolute path of the llama-server binary."
+    echo "  -> Are you inside the toolbox? (Run: toolbox enter llama-rocm-7.2)"
+    echo "  -> Or set LLAMA_SERVER_BIN to the absolute path."
     exit 1
 fi
 
