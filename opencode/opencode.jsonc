@@ -1,45 +1,80 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
-  // Prefer local-only usage
-  "enabled_providers": ["local_llamacpp"],
-
+  // Split providers to ensure baseURL is respected for each server
+  "enabled_providers": [
+    "local_util",
+    "local_coder",
+    "local_thinker"
+  ],
   "provider": {
-    "local_llamacpp": {
+    "local_util": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Local llama.cpp",
+      "name": "Local Utility",
       "options": {
+        "baseURL": "http://127.0.0.1:8001/v1",
         "apiKey": "EMPTY",
         "timeout": 600000
       },
       "models": {
-        "util":   { "name": "Utility (llama.cpp)", "baseURL": "http://127.0.0.1:8001/v1", "tool_call": true,
-                    "limit": { "context": 8192,  "output": 2048 } },
-        "coder":  { "name": "Coder (llama.cpp)",   "baseURL": "http://127.0.0.1:8002/v1", "tool_call": false,
-                    "limit": { "context": 32768, "output": 4096 } },
-        "thinker":{ "name": "Thinker (llama.cpp)", "baseURL": "http://127.0.0.1:8003/v1", "tool_call": false,
-                    "limit": { "context": 32768, "output": 4096 } }
+        "model": {
+          "tool_call": true,
+          "limit": {
+            "context": 8192,
+            "output": 2048
+          }
+        }
+      }
+    },
+    "local_coder": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local Coder",
+      "options": {
+        "baseURL": "http://127.0.0.1:8002/v1",
+        "apiKey": "EMPTY",
+        "timeout": 600000
+      },
+      "models": {
+        "model": {
+          "tool_call": false,
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          }
+        }
+      }
+    },
+    "local_thinker": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local Thinker",
+      "options": {
+        "baseURL": "http://127.0.0.1:8003/v1",
+        "apiKey": "EMPTY",
+        "timeout": 600000
+      },
+      "models": {
+        "model": {
+          "tool_call": false,
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          }
+        }
       }
     }
   },
-
   // Default model for normal "build"
-  "model": "local_llamacpp/coder",
-  "small_model": "local_llamacpp/util",
-
+  "model": "local_coder/model",
+  "small_model": "local_util/model",
   // Global tool safety: require approval for edits + shell
   "permission": {
     "edit": "ask",
     "bash": "ask"
   },
-
-  // Keep long tasks coherent
   "compaction": {
     "auto": true,
     "prune": true,
     "reserved": 12000
   },
-
   // MCP servers
   "mcp": {
     "archon": {
@@ -53,40 +88,53 @@
       "enabled": false
     }
   },
-
-  // Optional plugin memory (see README below)
-  "plugin": ["opencode-mem"],
-
+  "plugin": [
+    "opencode-mem"
+  ],
   // Agents (primary)
   "agent": {
     "build": {
       "description": "Implement changes (normal mode)",
       "mode": "primary",
-      "model": "local_llamacpp/coder",
-      "tools": { "write": true, "edit": true, "bash": true }
+      "model": "local_coder/model",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
     },
     "plan": {
       "description": "Plan/review without changing code",
       "mode": "primary",
-      "model": "local_llamacpp/thinker",
-      "tools": { "write": false, "edit": false, "bash": false }
+      "model": "local_thinker/model",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
     },
-
     // Ultra Work Mode
     "ultra": {
       "description": "Long-horizon, multi-pass implementation with rigorous checks",
       "mode": "primary",
-      "model": "local_llamacpp/coder",
+      "model": "local_coder/model",
       "prompt": "@opencode/agents/ultra.md",
-      "tools": { "write": true, "edit": true, "bash": true }
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
     },
-
-    // Subagents (fast helpers)
+    // Subagents
     "util": {
-      "description": "Fast helper for summarization, repo scanning instructions, command drafting",
+      "description": "Fast helper for summarization, repo scanning commands",
       "mode": "subagent",
-      "model": "local_llamacpp/util",
-      "tools": { "write": false, "edit": false, "bash": false }
+      "model": "local_util/model",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
     }
   }
 }
