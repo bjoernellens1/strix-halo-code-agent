@@ -82,11 +82,6 @@
       "url": "http://127.0.0.1:8181/mcp",
       "enabled": false
     },
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "enabled": false
-    }
   },
   "plugin": [
     "opencode-mem"
@@ -119,6 +114,11 @@
       "mode": "primary",
       "model": "local_coder/model",
       "prompt": "@opencode/agents/ultra.md",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
       "tools": {
         "write": true,
         "edit": true,

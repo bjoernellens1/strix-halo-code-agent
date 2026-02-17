@@ -16,6 +16,13 @@ Local AI coding agent stack for AMD Strix Halo:
 toolbox enter llama-rocm-7.2
 ```
 
+### Alternative: Lightweight Opencode Toolbox (No ROCm)
+If you only need to run `opencode` (e.g. with OpenRouter) without local model servers:
+```bash
+./scripts/toolbox-create-lite.sh opencode
+toolbox enter opencode
+```
+
 ## 2) Start model servers (inside toolbox)
 
 By default, scripts will **automatically download** optimized GGUF models from HuggingFace (specifically `bartowski`'s `Q4_K_M` quantizations):
@@ -49,3 +56,24 @@ OPENCODE_CONFIG_DIR=$(pwd)/opencode opencode
 
 * Tab between agents: build / plan / ultra
 * Run commands: `/scan`, `/tests`, `/review`, `/ultra`
+
+## 5) OpenRouter Integration
+
+To use cloud models via OpenRouter:
+
+1.  Export your API key:
+    ```bash
+    export OPENROUTER_API_KEY=sk-or-v1-...
+    ```
+2.  Run `opencode` (it will use the configured OpenRouter models).
+
+### Standalone Agent
+
+A standalone agent is available in `openrouter-agent/`:
+```bash
+cd openrouter-agent
+nix develop
+npm run start:headless
+```
+
+See [docs/openrouter_tutorial.md](docs/openrouter_tutorial.md) for details.
