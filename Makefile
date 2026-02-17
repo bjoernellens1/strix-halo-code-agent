@@ -1,16 +1,16 @@
-# Makefile for opencode-strix-stack
+TOOLBOX ?= llama-rocm-7.2
 
-.PHONY: all scripts
+toolbox:
+	./scripts/toolbox-create.sh $(TOOLBOX)
 
-all: help
+serve:
+	@echo "Run this inside toolbox: toolbox enter $(TOOLBOX) && ./scripts/start-all.sh"
 
-help:
-	@echo "Available commands:"
-	@echo "  make setup      - Make scripts executable"
-	@echo "  make clean      - Clean up"
+health:
+	./scripts/health.sh
 
-setup:
-	chmod +x scripts/*.sh
+cartography:
+	./scripts/cartography.sh
 
-clean:
-	@echo "Nothing to clean yet."
+opencode:
+	OPENCODE_CONFIG_DIR=$(PWD)/opencode opencode

@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$DIR/.." && pwd)"
+
+# Load .env if present
+if [[ -f "$REPO_ROOT/.env" ]]; then
+  source "$REPO_ROOT/.env"
+fi
 
 "$DIR/start-utility.sh" & P1=$!
 "$DIR/start-coder.sh"   & P2=$!

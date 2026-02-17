@@ -1,0 +1,12 @@
+{
+    "mode": "default",
+    "cartography": {
+        "enabled": true,
+        "path": ".opencode/cache/codemap.md"
+    },
+    "permissions": {
+        "bash": "ask",
+        "edit": "ask",
+        "write": "ask"
+    }
+}

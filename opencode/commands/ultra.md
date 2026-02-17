@@ -1,7 +1,10 @@
 ---
-description: Start Ultra Work Mode
-agent: ultra
+description: Start Ultra Work Mode pipeline
+agent: orchestrator
 ---
 
-Enter ULTRA WORK MODE for the current task. Follow the Ultra process.
-Start with a repo scan and a plan, then implement stepwise with verification.
+1) Ensure cartography is up to date: run /cartography if needed.
+2) Produce a numbered plan with verification commands.
+3) Delegate implementation to Fixer in small chunks.
+4) Run /tests.
+5) Run /review.

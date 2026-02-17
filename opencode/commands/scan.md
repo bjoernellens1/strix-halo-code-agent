@@ -1,9 +1,10 @@
 ---
-description: Quick repo scan (tree, git status, key files)
-agent: util
+description: Quick repo scan (git status + manifests + entrypoints)
+agent: explorer
 ---
 
-Repo overview:
-!`./scripts/generate_repo_map.sh`
-!`cat .opencode/repo_map.md`
-Summarize the project structure based on the map.
+!`git status --porcelain=v1`
+!`ls -1 README* pyproject.toml package.json Cargo.toml go.mod CMakeLists.txt Makefile 2>/dev/null || true`
+!`rg -n "main\\(|if __name__ == '__main__'|create_app\\(|FastAPI\\(|Flask\\(" -S . 2>/dev/null || true`
+
+Return: likely entry points + how to run/tests.

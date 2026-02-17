@@ -9,5 +9,5 @@ toolbox create "$NAME" \
   --group-add video --group-add render --group-add sudo \
   --security-opt seccomp=unconfined
 
-echo "Created toolbox: $NAME"
-echo "Enter with: toolbox enter $NAME"
+echo "Toolbox created: $NAME"
+echo "Enter: toolbox enter $NAME"

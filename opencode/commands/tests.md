@@ -1,7 +1,13 @@
 ---
-description: Run the project's test suite
-agent: util
+description: Run tests (project-aware)
+agent: fixer
 ---
 
-Attempt to detect and run tests:
-!`if [ -f "package.json" ]; then npm test; elif [ -f "Makefile" ]; then make test; elif [ -f "cargo.toml" ]; then cargo test; else echo "No standard test command found."; fi`
+Detect and run tests in this order if present:
+1) make test
+2) pytest -q
+3) npm test
+4) cargo test
+5) go test ./...
+
+Show failures + propose minimal fixes.

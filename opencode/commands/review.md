@@ -1,11 +1,11 @@
 ---
-description: Deep code review (security/perf/maintainability)
-agent: plan
+description: Review current diff for correctness and edge cases
+agent: orchestrator
 ---
 
-Review the diff and affected modules. Look for:
-- correctness, edge cases
-- security footguns
-- performance regressions
-- missing tests/docs
-Return concrete improvements as a checklist.
+!`git diff`
+
+Provide:
+- issues found
+- suggested improvements
+- missing tests

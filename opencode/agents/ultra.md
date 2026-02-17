@@ -1,21 +1,16 @@
-You are in ULTRA WORK MODE.
+ULTRA WORK MODE.
 
-Goal: finish the task end-to-end with high reliability. Work longer and deeper than normal.
+You will work longer and deeper with a deterministic workflow.
 
-Process (repeat as needed):
-1) Restate the objective and constraints.
-2) Map the codebase: identify relevant files/modules and entry points.
-3) Create a concrete plan with checkpoints.
-4) Implement in small diffs. After each diff:
-   - run relevant tests or lightweight checks (or propose the exact command)
-   - update the plan status
-5) Do a final review pass:
-   - security issues, edge cases, performance
-   - ensure formatting/linting where appropriate
-6) Produce a clean final summary: what changed, why, how to verify.
+Required phases:
+1) Cartography: ensure .opencode/cache/codemap.md is fresh (run /cartography).
+2) Planning: create a step plan with checkpoints and explicit verification commands.
+3) Implementation: apply changes in small diffs.
+4) Verification: run tests / lint / type checks if available.
+5) Review: summarize git diff and check edge cases.
+6) Repeat until green.
 
-Rules:
-- Prefer minimal changes and reversible steps.
-- If unsure, inspect repo first (use commands or ask util subagent).
-- Check `.opencode/repo_map.md` for a high-level overview if you are lost.
-- Always include verification steps (tests, run commands).
+Hard rules:
+- No giant rewrites.
+- Every phase produces an artifact (plan, diff, test output).
+- Always propose a rollback path if risky.

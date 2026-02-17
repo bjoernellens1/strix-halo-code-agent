@@ -1,157 +1,111 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  // Split providers to ensure baseURL is respected for each server
-  "enabled_providers": [
-    "local_util",
-    "local_coder",
-    "local_thinker"
-  ],
   "provider": {
-    "local_util": {
+    "llamacpp": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Local Utility",
+      "name": "Local llama.cpp",
       "options": {
-        "baseURL": "http://127.0.0.1:8001/v1",
         "apiKey": "EMPTY",
         "timeout": 600000
       },
       "models": {
-        "model": {
-          "tool_call": true,
+        "util": {
+          "name": "Utility",
+          "baseURL": "http://127.0.0.1:8001/v1",
+          "tool_call": false,
+          "vision": true,
           "limit": {
             "context": 8192,
+            "output": 2048
+          }
+        },
+        "coder": {
+          "name": "Coder",
+          "baseURL": "http://127.0.0.1:8002/v1",
+          "tool_call": false,
+          "limit": {
+            "context": 32768,
             "output": 4096
           }
-        }
-      }
-    },
-    "local_coder": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Local Coder",
-      "options": {
-        "baseURL": "http://127.0.0.1:8002/v1",
-        "apiKey": "EMPTY",
-        "timeout": 600000
-      },
-      "models": {
-        "model": {
+        },
+        "thinker": {
+          "name": "Thinker",
+          "baseURL": "http://127.0.0.1:8003/v1",
           "tool_call": false,
           "limit": {
-            "context": 16384,
-            "output": 8192
-          }
-        }
-      }
-    },
-    "local_thinker": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Local Thinker",
-      "options": {
-        "baseURL": "http://127.0.0.1:8003/v1",
-        "apiKey": "EMPTY",
-        "timeout": 600000
-      },
-      "models": {
-        "model": {
-          "tool_call": false,
-          "limit": {
-            "context": 16384,
-            "output": 8192
+            "context": 32768,
+            "output": 4096
           }
         }
       }
     }
   },
-  // Default model for normal "build"
-  "model": "local_thinker/model",
-  "small_model": "local_util/model",
-  // Global tool safety: require approval for edits + shell
+  "model": "llamacpp/coder",
+  "small_model": "llamacpp/util",
   "permission": {
+    "bash": "ask",
     "edit": "ask",
-    "bash": "ask"
+    "write": "ask"
   },
   "compaction": {
     "auto": true,
     "prune": true,
     "reserved": 12000
   },
-  // MCP servers
-  "mcp": {
-    "archon": {
-      "type": "remote",
-      "url": "http://127.0.0.1:8181/mcp",
-      "enabled": true
-    }
-  },
-  "plugin": [
-    "opencode-mem"
-  ],
-  // Agents (primary)
   "agent": {
-    "build": {
-      "description": "Implement changes (normal mode)",
+    "orchestrator": {
+      "description": "Master controller: delegates, keeps process tight",
       "mode": "primary",
-      "model": "local_coder/model",
+      "model": "llamacpp/thinker",
+      "prompt": "@opencode/agents/orchestrator.md",
       "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true
-      }
-    },
-    "plan": {
-      "description": "Plan/review without changing code",
-      "mode": "primary",
-      "model": "local_thinker/model",
-      "tools": {
-        "write": false,
+        "bash": false,
         "edit": false,
-        "bash": false
+        "write": false
       }
     },
-    // Ultra Work Mode
+    "explorer": {
+      "description": "Repo navigator: locate files/symbols quickly",
+      "mode": "subagent",
+      "model": "llamacpp/util",
+      "prompt": "@opencode/agents/explorer.md",
+      "tools": {
+        "bash": false,
+        "edit": false,
+        "write": false
+      }
+    },
+    "librarian": {
+      "description": "Local knowledge retriever: codemap, docs, cache",
+      "mode": "subagent",
+      "model": "llamacpp/util",
+      "prompt": "@opencode/agents/librarian.md",
+      "tools": {
+        "bash": false,
+        "edit": false,
+        "write": false
+      }
+    },
+    "fixer": {
+      "description": "Implements code changes",
+      "mode": "subagent",
+      "model": "llamacpp/coder",
+      "prompt": "@opencode/agents/fixer.md",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "write": true
+      }
+    },
     "ultra": {
-      "description": "Long-horizon, multi-pass implementation with rigorous checks",
+      "description": "Ultra work mode: multi-pass implement + verify",
       "mode": "primary",
-      "model": "local_coder/model",
+      "model": "llamacpp/coder",
       "prompt": "@opencode/agents/ultra.md",
       "tools": {
-        "write": true,
+        "bash": true,
         "edit": true,
-        "bash": true
-      }
-    },
-    // Subagents
-    "review": {
-      "description": "Review code changes for errors and best practices",
-      "mode": "primary",
-      "model": "local_thinker/model",
-      "prompt": "@opencode/agents/review.md",
-      "tools": {
-        "write": false,
-        "edit": false,
-        "bash": true
-      }
-    },
-    "code-reviewer": {
-      "description": "Legacy alias for review agent",
-      "mode": "primary",
-      "model": "local_thinker/model",
-      "prompt": "@opencode/agents/review.md",
-      "tools": {
-        "write": false,
-        "edit": false,
-        "bash": true
-      }
-    },
-    "util": {
-      "description": "Fast helper for summarization, repo scanning commands",
-      "mode": "subagent",
-      "model": "local_util/model",
-      "prompt": "@opencode/agents/util.md",
-      "tools": {
-        "write": false,
-        "edit": false,
-        "bash": true
+        "write": true
       }
     }
   }

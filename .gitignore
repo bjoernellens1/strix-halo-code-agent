@@ -16,3 +16,8 @@ npm-debug.log
 yarn-error.log
 bun.lockb
 mcp/archon.env
+
+# Opencode
+.opencode/cache/*
+.opencode/memory/*
+*.log
