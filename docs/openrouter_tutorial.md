@@ -42,6 +42,30 @@ The agents have been updated to use these models:
 -   **Build Agent** (`agent.build`): Uses `minimax/minimax-m2.5` for coding tasks.
 -   **Research Agent** (`agent.research`): Uses `openai/gpt-oss-safeguard-20b` for background research and web search.
 
+### Authentication Fails in Toolbox but Works Outside
+If `OPENROUTER_API_KEY` works in your host shell but fails inside the toolbox:
+1. **Check your shell**: Toolbox uses `bash` by default. If you use `zsh` on your host and export the key in `~/.zshrc`, provided the toolbox shares your home directory, `~/.bashrc` might not have the key.
+2. **Fix**: Add the export to `~/.bashrc`:
+   ```bash
+   echo 'export OPENROUTER_API_KEY=your_key_here' >> ~/.bashrc
+   ```
+- **`opencode` fails to save API key or login**:
+  - If you encounter errors saving your API key or logging in, it might be due to missing credential storage libraries in the toolbox.
+  - Fix: Install `libsecret` and `gnome-keyring` inside the toolbox:
+    ```bash
+    toolbox run --container opencode sudo dnf install -y libsecret gnome-keyring
+    ```
+   Or explicitly pass it when entering:
+   ```bash
+   toolbox run --container opencode env OPENROUTER_API_KEY=$OPENROUTER_API_KEY opencode
+   ```
+
+### SQLite Error
+If the agent crashes with `SQLiteError: bad parameter or other API misuse`:
+    ```bash
+    export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+    ```
+
 ### Usage
 
 To use `opencode` with OpenRouter:
