@@ -1,7 +1,33 @@
 services:
-  archon:
-    image: ghcr.io/coleam00/archon:latest
-    # Use host network to access local llama-server on 127.0.0.1
-    network_mode: "host"
-    env_file:
-      - ./archon.env
+  # archon:
+  #   image: ghcr.io/coleam00/archon:latest
+  #   # Use host network to access local llama-server on 127.0.0.1
+  #   network_mode: "host"
+  #   env_file:
+  #     - ./archon.env
+
+  searxng:
+    image: searxng/searxng:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - BASE_URL=http://localhost:8080/
+    volumes:
+      - searxng-data:/etc/searxng
+    restart: unless-stopped
+
+  # MCP bridge to SearXNG
+  mcp-searxng:
+    image: node:20-alpine
+    environment:
+      - SEARXNG_URL=http://searxng:8080
+    command: >
+      sh -lc "npm i -g mcp-searxng && mcp-searxng"
+    depends_on:
+      - searxng
+    ports:
+      - "8787:8787"
+    restart: unless-stopped
+
+volumes:
+  searxng-data:

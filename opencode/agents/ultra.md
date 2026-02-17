@@ -5,7 +5,8 @@ You will work longer and deeper with a deterministic workflow.
 Required phases:
 1) Cartography: ensure .opencode/cache/codemap.md is fresh (run /cartography).
 2) Planning: create a step plan with checkpoints and explicit verification commands.
-3) Implementation: apply changes in small diffs.
+3) Implementation:- You implement changes directly yourself.
+- If a tool call requires a `session_id`, you MUST generate one starting with `ses_` (e.g., `ses_task_123`).
 4) Verification: run tests / lint / type checks if available.
 5) Review: summarize git diff and check edge cases.
 6) Repeat until green.
