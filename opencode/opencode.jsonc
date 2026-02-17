@@ -31,7 +31,7 @@
       "models": {
         "coder": {
           "name": "Coder",
-          "tool_call": true,
+          "tool_call": false,
           "limit": {
             "context": 32768,
             "output": 4096
@@ -69,11 +69,11 @@
     }
   },
   "permission": {
-    "bash": "ask",
+    "bash": "allow",
     "edit": "ask",
     "write": "ask",
-    "webfetch": "ask",
-    "mcp.*": "ask"
+    "webfetch": "allow",
+    "mcp.*": "allow"
   },
   "compaction": {
     "auto": true,
