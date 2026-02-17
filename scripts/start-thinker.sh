@@ -3,7 +3,7 @@ set -euo pipefail
 
 # MODEL variables are optional overrides now (see below)
 PORT="${PORT_THINKER:-8003}"
-CTX="${CTX_THINKER:-32768}"
+CTX="${CTX_THINKER:-16384}"
 THREADS="${THREADS_THINKER:-16}"
 
 THREADS="${THREADS_THINKER:-16}"

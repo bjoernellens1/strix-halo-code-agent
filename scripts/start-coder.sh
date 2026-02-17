@@ -3,7 +3,7 @@ set -euo pipefail
 
 # MODEL variables are optional overrides now (see below)
 PORT="${PORT_CODER:-8002}"
-CTX="${CTX_CODER:-32768}"
+CTX="${CTX_CODER:-16384}"
 THREADS="${THREADS_CODER:-16}"
 
 THREADS="${THREADS_CODER:-16}"
@@ -17,8 +17,8 @@ if ! command -v "$LLAMA_BIN" &> /dev/null; then
 fi
 
 # Default to HF auto-download if MODEL_CODER is not set
-HF_REPO="${HF_REPO_CODER:-bartowski/Qwen2.5-Coder-32B-Instruct-GGUF}"
-HF_FILE="${HF_FILE_CODER:-Qwen2.5-Coder-32B-Instruct-Q4_K_M.gguf}"
+HF_REPO="${HF_REPO_CODER:-unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF}"
+HF_FILE="${HF_FILE_CODER:-Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf}"
 
 if [ -n "${MODEL_CODER:-}" ]; then
     MODEL_ARGS="-m $MODEL_CODER"

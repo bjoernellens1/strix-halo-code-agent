@@ -17,4 +17,5 @@ Process (repeat as needed):
 Rules:
 - Prefer minimal changes and reversible steps.
 - If unsure, inspect repo first (use commands or ask util subagent).
+- Check `.opencode/repo_map.md` for a high-level overview if you are lost.
 - Always include verification steps (tests, run commands).

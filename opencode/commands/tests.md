@@ -1,7 +1,7 @@
 ---
-description: Run tests (project-aware)
-agent: ultra
+description: Run the project's test suite
+agent: util
 ---
 
-Figure out how this repo runs tests (pytest/npm/go test/cmake/...) and then run them.
-Include failing output and propose minimal fixes.
+Attempt to detect and run tests:
+!`if [ -f "package.json" ]; then npm test; elif [ -f "Makefile" ]; then make test; elif [ -f "cargo.toml" ]; then cargo test; else echo "No standard test command found."; fi`

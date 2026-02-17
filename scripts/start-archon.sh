@@ -14,12 +14,15 @@ echo "Starting Archon in $MCP_DIR..."
 cd "$MCP_DIR"
 
 # Try docker compose, then docker-compose, then podman-compose
+# Try docker compose, then docker-compose, then podman-compose, then podman compose
 if command -v docker &> /dev/null && docker compose version &> /dev/null; then
     docker compose up -d
 elif command -v docker-compose &> /dev/null; then
     docker-compose up -d
 elif command -v podman-compose &> /dev/null; then
     podman-compose up -d
+elif command -v podman &> /dev/null && podman compose version &> /dev/null; then
+    podman compose up -d
 else
     echo "Error: No docker-compose compatible tool found!"
     exit 1

@@ -20,7 +20,7 @@
           "tool_call": true,
           "limit": {
             "context": 8192,
-            "output": 2048
+            "output": 4096
           }
         }
       }
@@ -37,8 +37,8 @@
         "model": {
           "tool_call": false,
           "limit": {
-            "context": 32768,
-            "output": 4096
+            "context": 16384,
+            "output": 8192
           }
         }
       }
@@ -55,15 +55,15 @@
         "model": {
           "tool_call": false,
           "limit": {
-            "context": 32768,
-            "output": 4096
+            "context": 16384,
+            "output": 8192
           }
         }
       }
     }
   },
   // Default model for normal "build"
-  "model": "local_coder/model",
+  "model": "local_thinker/model",
   "small_model": "local_util/model",
   // Global tool safety: require approval for edits + shell
   "permission": {
@@ -80,8 +80,8 @@
     "archon": {
       "type": "remote",
       "url": "http://127.0.0.1:8181/mcp",
-      "enabled": false
-    },
+      "enabled": true
+    }
   },
   "plugin": [
     "opencode-mem"
@@ -119,21 +119,39 @@
         "edit": true,
         "bash": true
       }
+    },
+    // Subagents
+    "review": {
+      "description": "Review code changes for errors and best practices",
+      "mode": "primary",
+      "model": "local_thinker/model",
+      "prompt": "@opencode/agents/review.md",
       "tools": {
-        "write": true,
-        "edit": true,
+        "write": false,
+        "edit": false,
         "bash": true
       }
     },
-    // Subagents
+    "code-reviewer": {
+      "description": "Legacy alias for review agent",
+      "mode": "primary",
+      "model": "local_thinker/model",
+      "prompt": "@opencode/agents/review.md",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true
+      }
+    },
     "util": {
       "description": "Fast helper for summarization, repo scanning commands",
       "mode": "subagent",
       "model": "local_util/model",
+      "prompt": "@opencode/agents/util.md",
       "tools": {
         "write": false,
         "edit": false,
-        "bash": false
+        "bash": true
       }
     }
   }

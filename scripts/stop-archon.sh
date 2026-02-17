@@ -12,6 +12,8 @@ elif command -v docker-compose &> /dev/null; then
     docker-compose down
 elif command -v podman-compose &> /dev/null; then
     podman-compose down
+elif command -v podman &> /dev/null && podman compose version &> /dev/null; then
+    podman compose down
 else
     echo "Error: No docker-compose compatible tool found!"
     exit 1
